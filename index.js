@@ -77,3 +77,15 @@ class Venta_Tarjeta extends Venta_Efectivo {
         return super.total(this.prendas) + costoFinanciero;
     }
 }
+
+class Repositorio_Ventas {
+    constructor(ventas) {
+        this.ventas = ventas;
+    }
+
+    gananciasDeUnDia(fecha) {
+        let ventasDeUnDia = this.ventas.filter(venta => venta.fecha == fecha)
+        let ganancias = ventasDeUnDia.map(venta => venta.total())
+        return _.sum(ganancias) 
+    }
+}
