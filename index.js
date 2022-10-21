@@ -41,7 +41,32 @@ class Promocion extends Estado {
     }
 }
 
-let estadoNuevo = new Liquidacion();
-let sacoCheto = new Prenda(estadoNuevo, 1500, 'saco');
+class Prenda_Vendida {
+    constructor(prenda, cantidad) {
+        this.prenda = prenda;
+        this.cantidad = cantidad;
+    }
 
-console.log(sacoCheto.precioVenta())
+    precioFinal() {
+        return this.prenda.precioVenta() * this.cantidad;
+    }
+}
+
+class Venta_Efectivo {
+    constructor(prendas, fecha) {
+        this.prendas = prendas;
+        this.fecha = fecha;
+    }
+
+    total() {
+        return _.sum(this.prendas);
+    }
+}
+
+class Venta_Tarjeta extends Venta_Efectivo {
+    constructor(prendas, fecha, cuotas, coeficiente) {
+        super(prendas, fecha);
+        this.cuotas = cuotas;
+        this.coeficiente = coeficiente;
+    }
+}
