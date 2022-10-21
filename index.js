@@ -59,7 +59,9 @@ class Venta_Efectivo {
     }
 
     total() {
-        return _.sum(this.prendas);
+        let totalPrendas = this.prendas.map(prenda => prenda.precioFinal());
+        let total = _.sum(totalPrendas);
+        return total;
     }
 }
 
@@ -68,5 +70,10 @@ class Venta_Tarjeta extends Venta_Efectivo {
         super(prendas, fecha);
         this.cuotas = cuotas;
         this.coeficiente = coeficiente;
+    }
+
+    total() {
+        let costoFinanciero = this.cuotas * this.coeficiente + super.total(this.prendas) * 0.01;
+        return super.total(this.prendas) + costoFinanciero;
     }
 }
