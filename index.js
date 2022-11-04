@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 
 class Prenda {
     constructor(estado, precio, tipo) {
@@ -12,33 +13,25 @@ class Prenda {
     }
 }
 
-class Estado {
-    precioVenta(precio) { 
+class Nuevo {
+    precioVenta(precio) {
         return precio;
     }
 }
 
-class Nuevo extends Estado {
+class Liquidacion {
     precioVenta(precio) {
-        return super.precioVenta(precio);
+        return precio / 2;
     }
 }
 
-class Liquidacion extends Estado {
-    precioVenta(precio) {
-        return super.precioVenta(precio) / 2;
-    }
-}
-
-class Promocion extends Estado {
-
+class Promocion {
     constructor(valorUsuario) {
-        super();
         this.valorUsuario = valorUsuario;
     }
 
     precioVenta(precio) {
-        return super.precioVenta(precio) - this.valorUsuario;
+        return precio - this.valorUsuario;
     }
 }
 
@@ -60,8 +53,7 @@ class Venta_Efectivo {
     }
 
     total() {
-        let totalPrendas = this.prendas.map(prenda => prenda.precioFinal());
-        let total = _.sum(totalPrendas);
+        let total = _.sumBy(this.prendas, (prenda) => prenda.precioFinal());
         return total;
     }
 }
@@ -74,8 +66,9 @@ class Venta_Tarjeta extends Venta_Efectivo {
     }
 
     total() {
-        let costoFinanciero = this.cuotas * this.coeficiente + super.total(this.prendas) * 0.01;
-        return super.total(this.prendas) + costoFinanciero;
+        const superTotal = super.total(this.prendas);
+        let costoFinanciero = this.cuotas * this.coeficiente + superTotal * 0.01;
+        return superTotal + costoFinanciero;
     }
 }
 
@@ -85,10 +78,12 @@ class Repositorio_Ventas {
     }
 
     gananciasDeUnDia(fecha) {
-        let ventasDeUnDia = this.ventas.filter(venta => venta.fecha == fecha)
+        let ventasDeUnDia = this.ventas.filter(venta =>
+                moment(fecha).isSame(venta.fecha)
+            )
         let ganancias = ventasDeUnDia.map(venta => venta.total())
         return _.sum(ganancias) 
     }
 }
 
-module.exports = {Prenda, Estado, Nuevo, Liquidacion, Promocion, Prenda_Vendida, Venta_Efectivo, Venta_Tarjeta, Repositorio_Ventas}
+module.exports = {Prenda, Nuevo, Liquidacion, Promocion, Prenda_Vendida, Venta_Efectivo, Venta_Tarjeta, Repositorio_Ventas}

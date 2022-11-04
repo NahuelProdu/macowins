@@ -1,5 +1,6 @@
 const assert = require('assert');
 const index = require('../index')
+const moment = require('moment')
 
 //Estados
 let estadoNuevo = new index.Nuevo;
@@ -17,10 +18,11 @@ let prendaVendida2 = new index.Prenda_Vendida(prendaLiquidacion, 3);
 let prendaVendida3 = new index.Prenda_Vendida(prendaPromocion, 4);
 
 //Ventas
-let venta_efec_nuevas = new index.Venta_Efectivo([prendaVendida1], '08-11-2021')
-let venta_efec_liqui = new index.Venta_Efectivo([prendaVendida2], '08-11-2021')
-let venta_tarj_nuevas = new index.Venta_Tarjeta([prendaVendida1], '08-11-2021', 10, 0.2)
-let venta_tarj_promo = new index.Venta_Tarjeta([prendaVendida3], '08-11-2021', 10, 0.2)
+const fecha = moment('08-11-2021');
+let venta_efec_nuevas = new index.Venta_Efectivo([prendaVendida1], fecha)
+let venta_efec_liqui = new index.Venta_Efectivo([prendaVendida2], fecha)
+let venta_tarj_nuevas = new index.Venta_Tarjeta([prendaVendida1], fecha, 10, 0.2)
+let venta_tarj_promo = new index.Venta_Tarjeta([prendaVendida3], fecha, 10, 0.2)
 
 
 describe('Prendas', function () {
@@ -53,19 +55,19 @@ describe('Ventas', function () {
     });
 
     describe('Venta Efectivo - Precio c/u $1000', function () {
-        it('Pruebas liquidacion - Total venta $1500', function () {
+        it('Prendas liquidacion - Total venta $1500', function () {
             assert.equal(venta_efec_liqui.total(), 1500)
         });
     });
 
     describe('Venta Tarjeta - Precio c/u $1000', function () {
-        it('Pruebas nuevas - Total venta $2022', function () {
+        it('Prendas nuevas - Total venta $2022', function () {
             assert.equal(venta_tarj_nuevas.total(), 2022)
         });
     });
 
     describe('Venta Tarjeta - Precio c/u $1000', function () {
-        it('Pruebas nuevas - Total venta $810', function () {
+        it('Prendas en promocion - Total venta $810', function () {
             assert.equal(venta_tarj_promo.total(), 810)
         });
     });
@@ -73,20 +75,21 @@ describe('Ventas', function () {
 })
 
 
-describe('Prendas', function () {
+describe('Ganancias', function () {
 
     let arrayVentas = [venta_efec_liqui, venta_efec_nuevas, venta_tarj_nuevas, venta_tarj_promo];
     let ventas = new index.Repositorio_Ventas(arrayVentas);
 
     describe('Ganancias de un día laboral', function () {
         it('Ventas del 08-11-2021 - Total venta $6332', function () {
-            assert.equal(ventas.gananciasDeUnDia('08-11-2021'), 6332)
+            assert.equal(ventas.gananciasDeUnDia(fecha), 6332)
         });
     });
 
     describe('Ganancias de un día no laboral', function () {
         it('Ventas del 11-11-2021 - Total venta $0', function () {
-            assert.equal(ventas.gananciasDeUnDia('11-11-2021'), 0)
+            const fecha2 = moment('11-11-2021')
+            assert.equal(ventas.gananciasDeUnDia(fecha2), 0)
         });
     });
 })
