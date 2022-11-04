@@ -33,11 +33,12 @@ class Liquidacion extends Estado {
 class Promocion extends Estado {
 
     constructor(valorUsuario) {
+        super();
         this.valorUsuario = valorUsuario;
     }
 
     precioVenta(precio) {
-        return super.precioVenta(precio) / 2;
+        return super.precioVenta(precio) - this.valorUsuario;
     }
 }
 
@@ -89,3 +90,5 @@ class Repositorio_Ventas {
         return _.sum(ganancias) 
     }
 }
+
+module.exports = {Prenda, Estado, Nuevo, Liquidacion, Promocion, Prenda_Vendida, Venta_Efectivo, Venta_Tarjeta, Repositorio_Ventas}
